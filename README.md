@@ -10,7 +10,7 @@
 
 # My First VM
 
-Um simulador de BIOS/VM feito em Python: voce inicia uma BIOS fake, navega por um mini filesystem, da deploy em uma ISO Debian simulada e entra em um terminal com comandos basicos e pacotes instalaveis.
+Um simulador de BIOS/VM feito em Python: voce inicia uma BIOS simulada, navega por um filesystem, da deploy em uma ISO simulada e entra em um terminal com comandos basicos e pacotes instalaveis.
 
 ## Preview
 
@@ -76,6 +76,6 @@ BIOS/
     └── pkgs/               # pacotes instalaveis
 ```
 
-## Licenca
+## Licença
 
 MIT. Veja [`LICENSE`](LICENSE).
