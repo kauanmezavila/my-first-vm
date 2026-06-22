@@ -1,7 +1,7 @@
 from random import choice
 
 def main_call(COMMANDS, MANIFEST=None):
-    COMMANDS["fortune"] = fortune,
+    COMMANDS["fortune"] = fortune
 
 def fortune():
     fortunes = [
@@ -57,4 +57,4 @@ def fortune():
         "The only limit to our realization of tomorrow is our doubts of today. — Franklin D. Roosevelt"
     ]
 
-    print(f"\n{choice(fortunes)}")
+    print(f"\n  {choice(fortunes)}")
