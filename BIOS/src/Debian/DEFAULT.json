@@ -1,0 +1,14 @@
+{
+    "home": {
+        "MAIN.txt": "This is a main file"
+    },
+    "etc": {
+        "os-release": "\nNAME=\"Linux Debiam\"\nVERSION=\"12.7.0\"\nID=linuxdebian\nID_LIKE=\"ubuntu debian\"\nPRETTY_NAME=\"Linux Debian 12.7\"\nVERSION_ID=\"12.7\"\n",
+        "hostname": "linux-debian",
+        "username": "user",
+        "uname": "Linux"
+    },
+    ".installed_pkgs": [
+        "neofetch"
+    ]
+}
