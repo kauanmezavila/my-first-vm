@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&height=180&color=0:111111,50:b91c1c,100:ef4444&text=My%20First%20VM&fontColor=ffffff&fontAlignY=35&desc=BIOS%20fake%20%2B%20terminal%20Debian%20em%20Python&descAlignY=56" alt="My First VM banner">
+  <img src="https://capsule-render.vercel.app/api?type=waving&height=180&color=0:111111,50:b91c1c,100:ef4444&text=My%20First%20VM&fontColor=ffffff&fontAlignY=35&descAlignY=56" alt="My First VM banner">
 </p>
 
 <p align="center">
