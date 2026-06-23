@@ -92,6 +92,9 @@ def edit_entry(cmd: list[str]) -> bool:
 USER = FILES["etc"]["username"]
 HOST = FILES["etc"]["hostname"]
 
+MANIFEST["user"] = USER
+MANIFEST["host"] = HOST
+
 try:
     load_pkgs = question("Want to load pkgs on DEFAULT", "y")
     if load_pkgs == True:
