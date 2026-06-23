@@ -1,6 +1,6 @@
 from src.pkgs.colorme import *
 
-def main_call(COMMANDS, MANIFEST):
+def main_call(COMMANDS, MANIFEST, get_current_dir=None):
     COMMANDS["neofetch"] = lambda: neofetch(MANIFEST)
 
 def neofetch(MANIFEST):

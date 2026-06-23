@@ -1,6 +1,6 @@
 from random import choice
 
-def main_call(COMMANDS, MANIFEST=None):
+def main_call(COMMANDS, MANIFEST=None, get_current_dir=None):
     COMMANDS["fortune"] = fortune
 
 def fortune():

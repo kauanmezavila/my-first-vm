@@ -94,7 +94,7 @@ try:
     if load_pkgs == True:
         for pkg in load_persistency("src/Debian/DEFAULT.json").get(".installed_pkgs", []):
             module = importlib.import_module(f"src.pkgs.{pkg}")
-            module.main_call(COMMANDS, MANIFEST)
+            module.main_call(COMMANDS, MANIFEST, get_current_dir)
 
     while True:
         
@@ -212,7 +212,7 @@ Built-in commands:
 
                 if pkg.isidentifier() and importlib.util.find_spec(f"src.pkgs.{pkg}"):
                     module = importlib.import_module(f"src.pkgs.{pkg}")
-                    module.main_call(COMMANDS, MANIFEST)
+                    module.main_call(COMMANDS, MANIFEST, get_current_dir)
 
 
                     save_pkgs = question("Want to save on DEFAULT", "y")

@@ -4,7 +4,7 @@ FILES = {
       },
       "etc": {
           "os-release": '''
-NAME="Linux Debiam"
+NAME="Linux Debian"
 VERSION="12.7.0"
 ID=linuxdebian
 ID_LIKE="ubuntu debian"

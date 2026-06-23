@@ -1,6 +1,6 @@
 from textwrap import wrap
 
-def main_call(COMMANDS, MANIFEST=None):
+def main_call(COMMANDS, MANIFEST=None, get_current_dir=None):
     COMMANDS["cowsay"] = cowsay
 
 
