@@ -8,6 +8,5 @@
         "username": "user",
         "uname": "Linux"
     },
-    ".installed_pkgs": [
-    ]
+    ".installed_pkgs": ["colorme", "nano", "pathresolve"]
 }

@@ -1,3 +1,9 @@
+def main_call(COMMANDS, MANIFEST=None, get_current_dir=None):
+    COMMANDS["colorme"] = None
+
+def colorme():
+    print("[ OK ] Im probably running already where i need to")
+
 # Reset
 RESET = "\033[0m"
 

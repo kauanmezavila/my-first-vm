@@ -13,6 +13,12 @@
 #
 # E sempre coloque o caminho de import relativo à root, caso contrário da erro
 
+def main_call(COMMANDS, MANIFEST=None, get_current_dir=None):
+    COMMANDS["pathresolve"] = None
+
+def pathresolve():
+    print("[ OK ] Im probably running already where i need to")
+
 import sys
 from pathlib import Path
 
