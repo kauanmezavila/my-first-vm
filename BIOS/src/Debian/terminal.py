@@ -1,4 +1,5 @@
 import shlex
+import os
 import importlib
 import importlib.util
 from typing import Any, Callable
@@ -26,7 +27,7 @@ COMMANDS: dict[str, Callable[..., object]] = {
     "date": date,
 }
 
-actual_dir: str | None = None
+DOWNLOADED_PKGS = ["colorme", "pathresolve"]
 
 actual_path: list[str] = []
 
@@ -63,6 +64,8 @@ def edit_entry(cmd: list[str]) -> bool:
     elif cmd[0] == "touch":
         if isinstance(current.get(name), dict):
             print(f"\n[{RED}ERROR{WHITE}] {name} is a directory.")
+        elif name in current:
+            print(f"\n[{RED}ERROR{WHITE}] File exists: {name}")
         else:
             current[name] = current.get(name, "")
 
@@ -95,14 +98,15 @@ try:
         for pkg in load_persistency("src/Debian/DEFAULT.json").get(".installed_pkgs", []):
             module = importlib.import_module(f"src.pkgs.{pkg}")
             module.main_call(COMMANDS, MANIFEST, get_current_dir)
+            DOWNLOADED_PKGS.append(pkg)
 
     while True:
         
         path = "~" if not actual_path else "(~/" + "/".join(actual_path) + ")"
         cmd = shlex.split(input(f"\n{RED}{USER}{WHITE}@{RED}{HOST}{GREEN}{path}{WHITE}$: "))
 
-        if cmd == None or len(cmd) == 0:
-            pass
+        if len(cmd) == 0:
+            continue
 
 
         elif cmd[0] == "cd":
@@ -153,6 +157,15 @@ try:
 
         elif edit_entry(cmd):
             pass
+
+        elif cmd[0] == "passwd":
+            change_uname = question(f"Want to change {USER} to {cmd[1]}", "n")
+            if change_uname == True:
+                FILES["etc"]["username"] = cmd[1]
+                USER = FILES["etc"]["username"]
+                print(f"\n[ {GREEN}OK{WHITE} ] Username changed! Hi {USER}!")
+            else:
+                print(f"\n[{RED}ERROR{WHITE}] Action cancelled by user")
 
         elif cmd[0] == "exit":
 
@@ -205,26 +218,54 @@ Built-in commands:
                 print(f"\n[{RED}ERROR{WHITE}] No default files.")
 
         elif cmd[0] == "apt":
-            if len(cmd) < 3 or cmd[1] != "install":
-                print(f"\n[{RED}ERROR{WHITE}] Use: apt install <pkg>")
-            else:
+            if len(cmd) < 2:
+                print(f"\n[{RED}ERROR{WHITE}] Missing args, try install or list")
+                continue
+
+            if cmd[1] == "install":
+                if len(cmd) < 3:
+                    print(f"\n[{RED}ERROR{WHITE}] Missing package name.")
+                    continue
+
                 pkg = cmd[2]
 
-                if pkg.isidentifier() and importlib.util.find_spec(f"src.pkgs.{pkg}"):
-                    module = importlib.import_module(f"src.pkgs.{pkg}")
-                    module.main_call(COMMANDS, MANIFEST, get_current_dir)
+                if pkg not in DOWNLOADED_PKGS:
+                    if pkg.isidentifier() and importlib.util.find_spec(f"src.pkgs.{pkg}"):
+                        module = importlib.import_module(f"src.pkgs.{pkg}")
+                        module.main_call(COMMANDS, MANIFEST, get_current_dir)
 
 
-                    save_pkgs = question("Want to save on DEFAULT", "y")
-                    if save_pkgs == True:
-                        default_files = load_persistency("src/Debian/DEFAULT.json")
-                        default_files.setdefault(".installed_pkgs", [])
-                        if pkg not in default_files[".installed_pkgs"]:
-                            default_files[".installed_pkgs"].append(pkg)
-                        save_persistency(default_files, "src/Debian/DEFAULT.json")
+                        save_pkgs = question("Want to save on DEFAULT", "y")
+                        if save_pkgs == True:
+                            default_files = load_persistency("src/Debian/DEFAULT.json")
+                            default_files.setdefault(".installed_pkgs", [])
+                            if pkg not in default_files[".installed_pkgs"]:
+                                default_files[".installed_pkgs"].append(pkg)
+                            save_persistency(default_files, "src/Debian/DEFAULT.json")
+                        DOWNLOADED_PKGS.append(pkg)
+                
+                    else:
+                        print(f"\n[{RED}ERROR{WHITE}] The pkg {pkg} don't exist")
                 
                 else:
-                    print(f"\n[{RED}ERROR{WHITE}] The pkg {pkg} don't exist")
+                    if pkg in COMMANDS:
+                       print(f"\n[{RED}ERROR{WHITE}] '{pkg}' is already in sy stem, try to run {pkg}")
+                    else:
+                        print(f"\n[{RED}ERROR{WHITE}] '{pkg}' is already in system")
+
+            elif cmd[1] == "list":
+                pkgs_list: list = []
+
+                with os.scandir(BIOS_ROOT / r"src/pkgs/") as files:
+                    for file in files:
+                        if file.is_file():
+                            pkgs_list.append(file.name.replace(".py", ""))
+                print("\nAvaliable pkgs on src:")
+                for pkg in pkgs_list:
+                    print(f"    {pkg} {"(ON)" if pkg in DOWNLOADED_PKGS else ""}")
+
+            else:
+                print(f"\n[{RED}ERROR{WHITE}] Use: apt install <pkg>")
 
         elif cmd[0] in COMMANDS:
             func = COMMANDS[cmd[0]]
