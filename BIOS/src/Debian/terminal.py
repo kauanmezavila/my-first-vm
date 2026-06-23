@@ -93,7 +93,7 @@ USER = FILES["etc"]["username"]
 HOST = FILES["etc"]["hostname"]
 
 try:
-    load_pkgs = question("Want to load pkgs pn DEFAULT", "y")
+    load_pkgs = question("Want to load pkgs on DEFAULT", "y")
     if load_pkgs == True:
         for pkg in load_persistency("src/Debian/DEFAULT.json").get(".installed_pkgs", []):
             module = importlib.import_module(f"src.pkgs.{pkg}")
