@@ -2,6 +2,8 @@ import shlex
 import os
 import importlib
 import importlib.util
+import requests
+from tqdm import tqdm
 from typing import Any, Callable
 
 try:
@@ -248,7 +250,22 @@ Built-in commands:
                         DOWNLOADED_PKGS.append(pkg)
                 
                     else:
-                        print(f"\n[{RED}ERROR{WHITE}] The pkg {pkg} don't exist")
+                        try:
+                            url = f"https://raw.githubusercontent.com/kauanmezavila/my-first-vm-repo/refs/heads/main/{pkg}.py"
+                            print(f"{BLUE}[*]{RESET} Conecting with {url}...")
+
+                            with requests.get(url, stream=True) as r:
+                                total = int(r.headers.get("content-length", 0))
+
+                                with open(f"{pkg}.py", "wb") as f:
+                                    with tqdm(total=total, unit="B", unit_scale=True) as pbar:
+                                        for chunk in r.iter_content(1024):
+                                            f.write(chunk)
+                                            pbar.update(len(chunk))
+
+                            print(f"\n\n[ {GREEN}OK{WHITE} ] {pkg} downloaded!")
+                        except:
+                            print(f"\n[{RED}ERROR{WHITE}] The pkg {pkg} don't exist")
                 
                 else:
                     if pkg in COMMANDS:
