@@ -1,9 +1,4 @@
 import shlex
-import os
-import importlib
-import importlib.util
-import requests
-from tqdm import tqdm
 from typing import Any, Callable
 
 try:
@@ -29,8 +24,6 @@ COMMANDS: dict[str, Callable[..., object]] = {
     "date": date,
 }
 
-DOWNLOADED_PKGS = ["colorme", "pathresolve"]
-
 actual_path: list[str] = []
 
 
@@ -38,8 +31,9 @@ def get_current_dir() -> dict[str, Any]:
     current: dict[str, Any] = FILES
 
     for part in actual_path:
-        next_dir = current[part]
+        next_dir = current.get(part)
         if not isinstance(next_dir, dict):
+            actual_path.clear()
             return {}
         current = next_dir
 
@@ -100,15 +94,28 @@ MANIFEST["host"] = HOST
 try:
     load_pkgs = question("Want to load pkgs on DEFAULT", "y")
     if load_pkgs == True:
-        for pkg in load_persistency("src/Debian/DEFAULT.json").get(".installed_pkgs", []):
-            module = importlib.import_module(f"src.pkgs.{pkg}")
-            module.main_call(COMMANDS, MANIFEST, get_current_dir)
-            DOWNLOADED_PKGS.append(pkg)
+        try:
+            pkgs = load_persistency("src/Debian/DEFAULT.json").get(".installed_pkgs", [])
+        except (OSError, ValueError) as exc:
+            print_error(f"Could not load DEFAULT pkgs: {exc}")
+            pkgs = []
+        for pkg in pkgs:
+            if valid_pkg_name(pkg):
+                load_package(pkg, COMMANDS, MANIFEST, get_current_dir)
+            else:
+                print_error(f"Invalid pkg name on DEFAULT: {pkg}")
 
     while True:
         
         path = "~" if not actual_path else "(~/" + "/".join(actual_path) + ")"
-        cmd = shlex.split(input(f"\n{RED}{USER}{WHITE}@{RED}{HOST}{GREEN}{path}{WHITE}$: "))
+        try:
+            cmd = shlex.split(input(f"\n{RED}{USER}{WHITE}@{RED}{HOST}{GREEN}{path}{WHITE}$: "))
+        except ValueError as exc:
+            print_error(str(exc))
+            continue
+        except EOFError:
+            print(f"\n[ {GREEN}OK{WHITE} ] Shutting down...")
+            break
 
         if len(cmd) == 0:
             continue
@@ -164,6 +171,10 @@ try:
             pass
 
         elif cmd[0] == "passwd":
+            if len(cmd) < 2:
+                print_error("Missing username.")
+                continue
+
             change_uname = question(f"Want to change {USER} to {cmd[1]}", "n")
             if change_uname == True:
                 FILES["etc"]["username"] = cmd[1]
@@ -177,8 +188,11 @@ try:
             quest = question("Want to save your changes on files", "n")
 
             if quest == True:
-                save = save_persistency(FILES)
-                print(f"\n[ {GREEN}OK{WHITE} ] Saved!")
+                try:
+                    save_persistency(FILES)
+                    print(f"\n[ {GREEN}OK{WHITE} ] Saved!")
+                except OSError as exc:
+                    print_error(f"Could not save files: {exc}")
 
             else:
                 pass
@@ -199,6 +213,7 @@ Built-in commands:
   rmdir <dir>     Remove an empty directory.
   touch <file>    Create an empty file.
   rm <file>       Remove a file.
+  apt update      Update local package files from the remote repo.
   exit            Exit the terminal.
   help            Show this help message.                                   
 """)
@@ -212,7 +227,11 @@ Built-in commands:
                 FILES.clear()
                 FILES.update(saved_files)
             except FileNotFoundError:
-                print(f"\n[{RED}ERROR{WHITE}] No saved files.")
+                print_error("No saved files.")
+            except OSError as exc:
+                print_error(f"Could not load saved files: {exc}")
+            except ValueError as exc:
+                print_error(f"Saved files are invalid: {exc}")
 
         elif cmd[0] == "restp":
             try:
@@ -220,72 +239,14 @@ Built-in commands:
                 FILES.clear()
                 FILES.update(default_files)
             except FileNotFoundError:
-                print(f"\n[{RED}ERROR{WHITE}] No default files.")
+                print_error("No default files.")
+            except OSError as exc:
+                print_error(f"Could not load default files: {exc}")
+            except ValueError as exc:
+                print_error(f"Default files are invalid: {exc}")
 
         elif cmd[0] == "apt":
-            if len(cmd) < 2:
-                print(f"\n[{RED}ERROR{WHITE}] Missing args, try install or list")
-                continue
-
-            if cmd[1] == "install":
-                if len(cmd) < 3:
-                    print(f"\n[{RED}ERROR{WHITE}] Missing package name.")
-                    continue
-
-                pkg = cmd[2]
-
-                if pkg not in DOWNLOADED_PKGS:
-                    if pkg.isidentifier() and importlib.util.find_spec(f"src.pkgs.{pkg}"):
-                        module = importlib.import_module(f"src.pkgs.{pkg}")
-                        module.main_call(COMMANDS, MANIFEST, get_current_dir)
-
-
-                        save_pkgs = question("Want to save on DEFAULT", "y")
-                        if save_pkgs == True:
-                            default_files = load_persistency("src/Debian/DEFAULT.json")
-                            default_files.setdefault(".installed_pkgs", [])
-                            if pkg not in default_files[".installed_pkgs"]:
-                                default_files[".installed_pkgs"].append(pkg)
-                            save_persistency(default_files, "src/Debian/DEFAULT.json")
-                        DOWNLOADED_PKGS.append(pkg)
-                
-                    else:
-                        try:
-                            url = f"https://raw.githubusercontent.com/kauanmezavila/my-first-vm-repo/refs/heads/main/{pkg}.py"
-                            print(f"{BLUE}[*]{RESET} Conecting with {url}...")
-
-                            with requests.get(url, stream=True) as r:
-                                total = int(r.headers.get("content-length", 0))
-
-                                with open(f"{pkg}.py", "wb") as f:
-                                    with tqdm(total=total, unit="B", unit_scale=True) as pbar:
-                                        for chunk in r.iter_content(1024):
-                                            f.write(chunk)
-                                            pbar.update(len(chunk))
-
-                            print(f"\n\n[ {GREEN}OK{WHITE} ] {pkg} downloaded!")
-                        except:
-                            print(f"\n[{RED}ERROR{WHITE}] The pkg {pkg} don't exist")
-                
-                else:
-                    if pkg in COMMANDS:
-                       print(f"\n[{RED}ERROR{WHITE}] '{pkg}' is already in sy stem, try to run {pkg}")
-                    else:
-                        print(f"\n[{RED}ERROR{WHITE}] '{pkg}' is already in system")
-
-            elif cmd[1] == "list":
-                pkgs_list: list = []
-
-                with os.scandir(BIOS_ROOT / r"src/pkgs/") as files:
-                    for file in files:
-                        if file.is_file():
-                            pkgs_list.append(file.name.replace(".py", ""))
-                print("\nAvaliable pkgs on src:")
-                for pkg in pkgs_list:
-                    print(f"    {pkg} {"(ON)" if pkg in DOWNLOADED_PKGS else ""}")
-
-            else:
-                print(f"\n[{RED}ERROR{WHITE}] Use: apt install <pkg>")
+            handle_apt(cmd, COMMANDS, MANIFEST, get_current_dir)
 
         elif cmd[0] in COMMANDS:
             func = COMMANDS[cmd[0]]
@@ -293,7 +254,14 @@ Built-in commands:
             try:
                 func(cmd)
             except TypeError:
-                func()
+                try:
+                    func()
+                except TypeError as exc:
+                    print_error(f"Bad usage for '{cmd[0]}': {exc}")
+                except Exception as exc:
+                    print_error(f"Command '{cmd[0]}' failed: {exc}")
+            except Exception as exc:
+                print_error(f"Command '{cmd[0]}' failed: {exc}")
 
         else:
             print(f"\n[{RED}ERROR{WHITE}] Command not found: {cmd[0]}")
