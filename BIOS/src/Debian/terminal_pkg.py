@@ -3,12 +3,13 @@ import time
 import json
 import sys
 import tempfile
+import requests
 import importlib
 import importlib.util
-import requests
-from requests import RequestException
 from tqdm import tqdm
 from typing import Callable
+from requests import RequestException
+from datetime import datetime, timedelta
 
 from pathresolve import init_root_path
 BIOS_ROOT = init_root_path(2)
@@ -179,10 +180,7 @@ def handle_apt(
 
         pkg = cmd[2]
         if pkg in DOWNLOADED_PKGS:
-            if pkg in commands:
-                print_error(f"'{pkg}' is already in system, try to run {pkg}")
-            else:
-                print_error(f"'{pkg}' is already in system")
+            print_error(f"'{pkg}' is already installed")
             return
 
         if not valid_pkg_name(pkg):
@@ -308,3 +306,16 @@ def date():
 
 def echo(string):
     print(str(string))
+
+def uptime(inicio):
+    agora = datetime.now()
+    diferenca = agora - inicio
+    
+    dias = diferenca.days
+    segundos_totais = diferenca.seconds
+    
+    horas = segundos_totais // 3600
+    minutos = (segundos_totais % 3600) // 60
+    segundos = segundos_totais % 60
+    
+    return f"{dias}d {horas:02}h {minutos:02}m {segundos:02}s"

@@ -17,4 +17,14 @@ def deploy(path):
             code_list.append(line)
 
     code: str = "".join(code_list)
+
+    mods = [
+        m for m in list(sys.modules)
+        if m.startswith("src.")
+        or m.startswith("VMs.")
+    ]
+
+    for m in mods:
+        del sys.modules[m]
+
     exec(code, {"__file__": str(BIOS_ROOT / path), "__name__": "__main__"})

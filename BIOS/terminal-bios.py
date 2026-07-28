@@ -11,11 +11,32 @@ BIOS_ROOT = init_root_path(0)
 from terminal_pkg import *
 from files_bios import FILES
 from deploy import deploy
+from hardware import HARDWARE
 
 actual_dir: str | None = None
 
 actual_path: list = []
 
+config = {
+    "cpu_boost": {
+        "status": False
+    }
+}
+
+def cpu_boost(mode):
+    if mode == "enable":
+        if config["cpu_boost"]["status"] == False:
+            HARDWARE["cpu"]["bios-mode"] = "boost"
+            config["cpu_boost"]["status"] = True
+        else:
+            print("[ERROR] CPU already in boost")
+
+    if mode == "disable":
+        if config["cpu_boost"]["status"] == True:
+            HARDWARE["cpu"]["bios-mode"] = "base"
+            config["cpu_boost"]["status"] = False
+        else:
+            print("[ERROR] CPU is in normal mode")    
 
 def get_current_dir():
     current = FILES
@@ -177,6 +198,28 @@ if splash == "Start":
                     else:
                         print(f"[ OK ] Deploying and starting {target}")
                         deploy(current[target])
+
+            elif cmd[0] == "config":
+                if len(cmd) == 1:
+                    print(f"""System configs:
+[{"X" if config["cpu_boost"]["status"] == True else " "}] CPU Boost (cpu enable/disable)
+""")
+
+                elif cmd[1] == "cpu":
+                    if len(cmd) < 3:
+                        print("Uso: config cpu <enable|disable>")
+                    elif cmd[2] == "enable":
+                        cpu_boost("enable")
+                    elif cmd[2] == "disable":
+                        cpu_boost("disable")
+                    else:
+                        print("Opção inválida. Use 'enable' ou 'disable'.")
+
+
+                else:
+                    print(f"""System configs:
+[{"X" if config["cpu_boost"]["status"] else " "}] CPU Boost (cpu enable/disable)
+""")
 
             else:
                 print(f"\n[ERROR] Command not found: {cmd[0]}")

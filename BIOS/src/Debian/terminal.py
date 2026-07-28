@@ -15,6 +15,10 @@ from src.Debian.terminal_pkg import *
 from src.Debian.files_vm import FILES
 
 from VMs.Debian.init_pkg import MANIFEST
+from hardware import HARDWARE
+
+inicio = datetime.now()
+
 
 COMMANDS: dict[str, Callable[..., object]] = {
     "clear": clear,
@@ -117,6 +121,8 @@ try:
             print(f"\n[ {GREEN}OK{WHITE} ] Shutting down...")
             break
 
+        MANIFEST["uptime"] = uptime(inicio)
+
         if len(cmd) == 0:
             continue
 
@@ -198,6 +204,7 @@ try:
                 pass
 
             print(f"\n[ {GREEN}OK{WHITE} ] Shutting down...")
+            DOWNLOADED_PKGS = None
             break
 
         elif cmd[0] == "help":
@@ -220,6 +227,9 @@ Built-in commands:
 
         elif cmd[0] == "echo":
             echo(" ".join(cmd[1:]))
+
+        elif cmd[0] == "uptime":
+            uptime(inicio)
 
         elif cmd[0] == "loadp":
             try:
@@ -268,4 +278,5 @@ Built-in commands:
 
 
 except KeyboardInterrupt:
+    DOWNLOADED_PKGS = None
     print(f"\n\n[ {GREEN}OK{WHITE} ] Shutting down...")
