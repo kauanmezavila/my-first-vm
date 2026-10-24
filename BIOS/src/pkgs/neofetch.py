@@ -45,7 +45,7 @@ def neofetch(MANIFEST):
 {RED}⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠁⠉⠉⠁⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀        {RESET}
 """)
 
-    if MANIFEST["distro"] == "Kali":
+    elif MANIFEST["distro"] == "Kali":
         print(f"""{BLUE}
 {BLUE}⠀⠀⠀⠀⠠⠤⠤⠤⠤⠤⣤⣤⣤⣄⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀        {BLUE}{MANIFEST["user"]}{WHITE}@{BLUE}{MANIFEST["host"]}
 {BLUE}⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠛⠛⠿⢶⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀        {WHITE}------------------
