@@ -1,6 +1,7 @@
 FILES = {
       "Ventoy": {
           "Debian-12.7.0-amd64-netinst.iso": r"VMs/Debian/iso.py",
+          "Ubuntu-26.10-amd64-netinst.iso": r"VMs/Ubuntu/iso.py",
       },
       "etc": {
           "info.txt": """

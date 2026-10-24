@@ -1,0 +1,12 @@
+{
+  "home": {
+    "MAIN.txt": "This is a main file"
+  },
+  "etc": {
+    "os-release": "\nNAME=\"Linux Ubuntu\"\nVERSION=\"26.10\"\nID=linuxubuntu\nID_LIKE=\"ubuntu debian\"\nPRETTY_NAME=\"Linux Ubuntu 26.10\"\nVERSION_ID=\"26.10\"\n",
+    "hostname": "linux-ubuntu",
+    "username": "user",
+    "uname": "Linux"
+  },
+  ".installed_pkgs": ["colorme", "nano", "pathresolve"]
+}
