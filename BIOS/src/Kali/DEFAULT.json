@@ -1,0 +1,12 @@
+{
+  "home": {
+    "MAIN.txt": "This is a main file"
+  },
+  "etc": {
+    "os-release": "\nNAME=\"Kali Linux\"\nVERSION=\"2026.2\"\nID=kalilinux\nID_LIKE=\"ubuntu debian\"\nPRETTY_NAME=\"Kali Linux 2026.2\"\nVERSION_ID=\"2026.2\"\n",
+    "hostname": "kali",
+    "username": "kali",
+    "uname": "Linux"
+  },
+  ".installed_pkgs": ["colorme", "nano", "pathresolve"]
+}

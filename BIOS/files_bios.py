@@ -2,6 +2,7 @@ FILES = {
       "Ventoy": {
           "Debian-12.7.0-amd64-netinst.iso": r"VMs/Debian/iso.py",
           "Ubuntu-26.10-amd64-netinst.iso": r"VMs/Ubuntu/iso.py",
+          "Kali-2026.2-amd64.iso": r"VMs/Kali/iso.py",
       },
       "etc": {
           "info.txt": """
