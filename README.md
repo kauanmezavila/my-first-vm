@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&height=180&color=0:111111,50:b91c1c,100:ef4444&text=My%20First%20VM&fontColor=ffffff&fontAlignY=35&descAlignY=56" alt="My First VM banner">
+  <img src="https://capsule-render.vercel.app/api?type=waving&height=180&color=0:111111,50:b91c1c,100:ef4444&text=My%20First%20VM&fontColor=ffffff&fontAlignY=35&descAlignY=56" alt="Banner My First VM">
 </p>
 
 <p align="center">
@@ -10,72 +10,75 @@
 
 # My First VM
 
-Um simulador de BIOS/VM feito em Python: voce inicia uma BIOS simulada, navega por um filesystem, da deploy em uma ISO simulada e entra em um terminal com comandos basicos e pacotes instalaveis.
+Um simulador interativo de BIOS e máquinas virtuais feito em Python. A BIOS tem um filesystem em memória e um menu de inicialização; nela, você escolhe uma ISO simulada para abrir um terminal de Debian, Kali Linux ou Ubuntu.
 
-## Preview
+> As ISOs e os sistemas operacionais são simulados pelo projeto. Eles não iniciam uma máquina virtual real.
 
-```text
-root@main-vm~$: ls
+## Funcionalidades
 
-Ventoy
-etc
-init-SHA265.txt
+- Menu de inicialização e prompt da BIOS (`root@main-vm`).
+- Navegação e edição do filesystem simulado com `cd`, `ls`, `pwd`, `cat`, `mkdir`, `rmdir`, `touch` e `rm`.
+- Deploy das imagens Debian 12.7.0, Kali Linux 2026.2 e Ubuntu 26.10.
+- Terminais por distribuição, com comandos básicos, informações de sistema e persistência de arquivos em JSON.
+- Gerenciador `apt` simulado para instalar, remover e listar pacotes.
+- Pacotes de exemplo: `cowsay`, `neofetch`, `tree`, `nano`, `fortune`, `nmap`, `firefox` e `google`.
 
-root@main-vm~$: deploy Debian-12.7.0-amd64-netinst.iso
-[ OK ] Deploying and starting Debian-12.7.0-amd64-netinst.iso
+## Requisitos e execução
 
-user@linux-debian~$: neofetch
-OS: Debian 12.7.0 amd64
-Kernel: Linux 6.17.0-35-generic
-ISO: Debian-12.7.0-amd64-netinst.iso
-```
-
-## Features
-
-| Area | O que tem |
-| --- | --- |
-| BIOS | Splash screen, prompt `root@main-vm`, filesystem em memoria |
-| Deploy | Carrega a ISO fake `Debian-12.7.0-amd64-netinst.iso` |
-| Debian VM | Terminal com `cd`, `ls`, `pwd`, `cat`, `mkdir`, `touch`, `rm`, `rmdir` |
-| Pacotes | `apt install <pkg>` para comandos em `BIOS/src/pkgs` |
-| Extras | `neofetch`, `cowsay`, persistencia via JSON |
-
-## Como rodar
+Requer Python 3 e um terminal interativo (TTY), pois o menu inicial usa `questionary`.
 
 ```bash
+python3 -m pip install -r requirements.txt
 cd BIOS
-python3 -m pip install questionary
 python3 terminal-bios.py
 ```
 
-> Precisa rodar em um terminal interativo. Pipe/execucao sem TTY quebra o menu visual.
+No menu, selecione **Start**. Na BIOS, use `ls` para ver o filesystem, `cd Ventoy` para entrar na pasta das imagens e `deploy <arquivo.iso>` para iniciar uma distribuição. Por exemplo:
+
+```text
+root@main-vm$: cd Ventoy
+root@main-vm(Ventoy)$: ls
+root@main-vm(Ventoy)$: deploy Debian-12.7.0-amd64-netinst.iso
+```
+
+As imagens disponíveis são:
+
+| Distribuição | Arquivo ISO simulado |
+| --- | --- |
+| Debian 12.7.0 | `Debian-12.7.0-amd64-netinst.iso` |
+| Kali Linux 2026.2 | `Kali-2026.2-amd64.iso` |
+| Ubuntu 26.10 | `Ubuntu-26.10-amd64-netinst.iso` |
 
 ## Comandos
 
-| Comando | Onde | Uso |
-| --- | --- | --- |
-| `help` | BIOS/Debian | Lista comandos disponiveis |
-| `ls` | BIOS/Debian | Mostra arquivos e diretorios |
-| `cd <dir>` | BIOS/Debian | Entra em um diretorio |
-| `cat <file>` | BIOS/Debian | Mostra conteudo de arquivo |
-| `deploy <.iso>` | BIOS | Inicia uma ISO simulada |
-| `apt install cowsay` | Debian | Instala o pacote `cowsay` |
-| `apt install neofetch` | Debian | Instala o pacote `neofetch` |
-| `exit` | BIOS/Debian | Encerra o terminal atual |
+Na BIOS, `help` lista os comandos. Além dos comandos de filesystem, estão disponíveis `deploy <.iso>`, `config` (inclui `config cpu enable|disable`) e `exit`.
 
-## Estrutura
+Nos terminais das distribuições, `help` mostra os comandos básicos. O gerenciador de pacotes oferece:
+
+```text
+apt list                 # lista pacotes locais
+apt install <pacote>     # instala um pacote
+apt rm <pacote>          # remove um pacote
+apt update               # atualiza os arquivos de pacotes remotos
+```
+
+Para explorar os utilitários depois de instalá-los, consulte `help`, `nmap --help`, `firefox --help` ou `google --help`, conforme o pacote.
+
+## Estrutura do projeto
 
 ```text
 BIOS/
-├── terminal-bios.py        # entrada da BIOS
-├── deploy.py               # executor da ISO fake
-├── files_bios.py           # filesystem da BIOS
-├── VMs/Debian/             # manifest e bootstrap da VM Debian
+├── terminal-bios.py      # entrada e prompt da BIOS
+├── deploy.py             # carrega uma imagem simulada
+├── files_bios.py         # filesystem inicial da BIOS e imagens
+├── VMs/                  # manifests e inicialização Debian, Kali e Ubuntu
 └── src/
-    ├── Debian/             # terminal e filesystem da VM
-    └── pkgs/               # pacotes instalaveis
+    ├── Debian/           # terminal, filesystem e pacotes da VM Debian
+    ├── Kali/             # terminal, filesystem e pacotes da VM Kali
+    ├── Ubuntu/           # terminal, filesystem e pacotes da VM Ubuntu
+    └── pkgs/             # utilitários instaláveis
 ```
 
 ## Licença
 
-MIT. Veja [`LICENSE`](LICENSE).
+MIT. Consulte [`LICENSE`](LICENSE).
