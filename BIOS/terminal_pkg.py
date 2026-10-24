@@ -24,13 +24,7 @@ def print_centered(text: str, width: int):
     esquerda = max(0, (width - largura_visivel) // 2)
     direita = max(0, width - esquerda - largura_visivel)
 
-    print(
-        f"{BG_BLACK}"
-        + (" " * esquerda)
-        + text
-        + (" " * direita)
-        + RESET
-    )
+    print(f"{BG_BLACK}" + (" " * esquerda) + text + (" " * direita) + RESET)
 
 
 def main_splash() -> str:
@@ -50,51 +44,30 @@ def main_splash() -> str:
     ]
 
     linhas_totais = len(banner) + len(opcoes) + 8
-    padding_vertical = max(
-        0,
-        (altura_terminal - linhas_totais) // 2
-    )
+    padding_vertical = max(0, (altura_terminal - linhas_totais) // 2)
 
     print("\n" * padding_vertical, end="")
 
     # Barra superior
-    print(
-        f"{BG_BLACK}"
-        + (" " * largura_terminal)
-        + RESET
-    )
+    print(f"{BG_BLACK}" + (" " * largura_terminal) + RESET)
 
     # Banner
     for linha in banner:
         print_centered(linha, largura_terminal)
 
     # Barra inferior
-    print(
-        f"{BG_BLACK}"
-        + (" " * largura_terminal)
-        + RESET
-    )
+    print(f"{BG_BLACK}" + (" " * largura_terminal) + RESET)
 
     print()
 
-    menu_padding = max(
-        0,
-        (largura_terminal // 2) - 8
-    )
+    menu_padding = max(0, (largura_terminal // 2) - 8)
 
     opcoes_centralizadas = [
-        questionary.Choice(
-            title=(" " * menu_padding) + opcao,
-            value=opcao
-        )
+        questionary.Choice(title=(" " * menu_padding) + opcao, value=opcao)
         for opcao in opcoes
     ]
 
-    escolha = questionary.select(
-        "",
-        choices=opcoes_centralizadas,
-        qmark="»"
-    ).ask()
+    escolha = questionary.select("", choices=opcoes_centralizadas, qmark="»").ask()
 
     if escolha is None:
         return "Exit"
@@ -105,7 +78,9 @@ def main_splash() -> str:
 
 
 def bios_banner():
-    print("""
+    print(
+        """
 [Award Modular BIOS v6.00PG]
 Copyright (C) 1984-2026, Award Software, Inc.
-""")
+"""
+    )

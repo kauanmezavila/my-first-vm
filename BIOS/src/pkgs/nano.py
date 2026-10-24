@@ -1,7 +1,7 @@
 def main_call(COMMANDS, MANIFEST=None, get_current_dir=None):
-      if get_current_dir is None:
-          raise TypeError("[ERROR] 'nano' requires get_current_dir function")
-      COMMANDS["nano"] = lambda cmd: nano(cmd, get_current_dir())
+    if get_current_dir is None:
+        raise TypeError("[ERROR] 'nano' requires get_current_dir function")
+    COMMANDS["nano"] = lambda cmd: nano(cmd, get_current_dir())
 
 
 def nano(cmd, current):
@@ -17,7 +17,7 @@ def nano(cmd, current):
         return
 
     lines = old.splitlines()
-    print(f"\nGNU nano fake - {name}")
+    print(f"\nGNU nano - {name}")
     print("Commands: .wq save | .q cancel | .p preview | .clear empty")
     print("-" * 40)
 

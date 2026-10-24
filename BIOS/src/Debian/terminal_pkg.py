@@ -12,6 +12,7 @@ from requests import RequestException
 from datetime import datetime, timedelta
 
 from pathresolve import init_root_path
+
 BIOS_ROOT = init_root_path(2)
 
 init_root_path(2)
@@ -187,7 +188,9 @@ def handle_apt(
             print_error(f"Invalid pkg name: {pkg}")
             return
 
-        if not importlib.util.find_spec(f"src.pkgs.{pkg}") and not download_package(pkg):
+        if not importlib.util.find_spec(f"src.pkgs.{pkg}") and not download_package(
+            pkg
+        ):
             return
 
         if not load_package(pkg, commands, manifest, get_current_dir):
@@ -247,8 +250,10 @@ def handle_apt(
 
     print_error("Use: apt install <pkg> | apt rm [-r] <pkg> | apt update | apt list")
 
+
 def clear():
-    os.system('cls' if os.name == 'nt' else 'clear')
+    os.system("cls" if os.name == "nt" else "clear")
+
 
 def question(question_text: str, enphase: str):
     if enphase == "y":
@@ -260,7 +265,7 @@ def question(question_text: str, enphase: str):
             return True
         else:
             return False
-        
+
     elif enphase == "n":
         try:
             quest = input(f"[!] {question_text}? [y/N]:").strip().lower()
@@ -280,11 +285,12 @@ def question(question_text: str, enphase: str):
             return True
         else:
             return False
-        
+
 
 def save_persistency(dados, path="src/Debian/FILES.json"):
     with open(BIOS_ROOT / path, "w", encoding="utf-8") as arquivo:
         json.dump(dados, arquivo, ensure_ascii=False, indent=4)
+
 
 def load_persistency(path="src/Debian/FILES.json"):
     with open(BIOS_ROOT / path, "r", encoding="utf-8") as arquivo:
@@ -294,28 +300,35 @@ def load_persistency(path="src/Debian/FILES.json"):
 def whoami():
     print(FILES["etc"]["username"])
 
+
 def uname():
     print(FILES["etc"]["uname"])
+
 
 def hostname():
     print(FILES["etc"]["hostname"])
 
+
 def date():
     time_now = time.localtime()
-    print(f"{time_now.tm_mday}-{time_now.tm_mon}-{time_now.tm_year} {time_now.tm_hour}:{time_now.tm_min}:{time_now.tm_sec}")
+    print(
+        f"{time_now.tm_mday}-{time_now.tm_mon}-{time_now.tm_year} {time_now.tm_hour}:{time_now.tm_min}:{time_now.tm_sec}"
+    )
+
 
 def echo(string):
     print(str(string))
 
+
 def uptime(inicio):
     agora = datetime.now()
     diferenca = agora - inicio
-    
+
     dias = diferenca.days
     segundos_totais = diferenca.seconds
-    
+
     horas = segundos_totais // 3600
     minutos = (segundos_totais % 3600) // 60
     segundos = segundos_totais % 60
-    
+
     return f"{dias}d {horas:02}h {minutos:02}m {segundos:02}s"

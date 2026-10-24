@@ -4,6 +4,7 @@ import sys
 BIOS_ROOT = Path(__file__).resolve().parent
 PKG_ROOT = BIOS_ROOT / "src" / "pkgs"
 
+
 def deploy(path):
     for root in (BIOS_ROOT, PKG_ROOT):
         if str(root) not in sys.path:
@@ -19,9 +20,7 @@ def deploy(path):
     code: str = "".join(code_list)
 
     mods = [
-        m for m in list(sys.modules)
-        if m.startswith("src.")
-        or m.startswith("VMs.")
+        m for m in list(sys.modules) if m.startswith("src.") or m.startswith("VMs.")
     ]
 
     for m in mods:

@@ -1,7 +1,9 @@
 from random import choice
 
+
 def main_call(COMMANDS, MANIFEST=None, get_current_dir=None):
     COMMANDS["fortune"] = fortune
+
 
 def fortune():
     fortunes = [
@@ -54,7 +56,7 @@ def fortune():
         "If opportunity doesn't knock, build a door. — Milton Berle",
         "Everything you can imagine is real. — Pablo Picasso",
         "In the middle of difficulty lies opportunity. — Albert Einstein",
-        "The only limit to our realization of tomorrow is our doubts of today. — Franklin D. Roosevelt"
+        "The only limit to our realization of tomorrow is our doubts of today. — Franklin D. Roosevelt",
     ]
 
     print(f"\n  {choice(fortunes)}")

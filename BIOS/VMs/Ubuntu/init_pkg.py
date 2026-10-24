@@ -6,9 +6,7 @@ MANIFEST = {
     "kernel": "Linux 6.17.0-35-generic",
     "iso": "Ubuntu-26.10-amd64-netinst.iso",
     "cpu_mode": "base",
-    "uptime": ""
+    "uptime": "",
 }
 
-MOUNT_INSTRUCTIONS = {
-    "source": r"src/Ubuntu/terminal.py"
-}
+MOUNT_INSTRUCTIONS = {"source": r"src/Ubuntu/terminal.py"}

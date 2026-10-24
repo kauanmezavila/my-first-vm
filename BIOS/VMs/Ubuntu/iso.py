@@ -1,4 +1,5 @@
 from pathresolve import init_root_path
+
 BIOS_ROOT = init_root_path(2)
 
 from VMs.Ubuntu.init_pkg import MOUNT_INSTRUCTIONS, MANIFEST

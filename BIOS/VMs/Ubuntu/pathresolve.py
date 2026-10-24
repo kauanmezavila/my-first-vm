@@ -1,13 +1,13 @@
 # OQ É o PathResolve???:
 # Se você for importar algum pacote padrão ou import interno de arquivos que criou
 # SEMPRE use a headline:
-# 
+#
 #   from pathresolve import init_root_path
 #    BIOS_ROOT = init_root_path({NIVEL})
 #
 # Em nível coloque o numero de pastas em relação à pasta root (no caso, BIOS), um
 # exemplo seria:
-# 
+#
 #   BIOS/src/Debian/
 #   Nível = 2
 #

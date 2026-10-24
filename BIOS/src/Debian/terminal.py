@@ -7,6 +7,7 @@ except ImportError:
     pass
 
 from pathresolve import init_root_path
+
 BIOS_ROOT = init_root_path(2)
 
 from src.pkgs.colorme import *
@@ -99,7 +100,9 @@ try:
     load_pkgs = question("Want to load pkgs on DEFAULT", "y")
     if load_pkgs == True:
         try:
-            pkgs = load_persistency("src/Debian/DEFAULT.json").get(".installed_pkgs", [])
+            pkgs = load_persistency("src/Debian/DEFAULT.json").get(
+                ".installed_pkgs", []
+            )
         except (OSError, ValueError) as exc:
             print_error(f"Could not load DEFAULT pkgs: {exc}")
             pkgs = []
@@ -110,10 +113,14 @@ try:
                 print_error(f"Invalid pkg name on DEFAULT: {pkg}")
 
     while True:
-        
+
         path = "~" if not actual_path else "(~/" + "/".join(actual_path) + ")"
         try:
-            cmd = shlex.split(input(f"\n{RED}{USER}{WHITE}@{RED}{HOST}{GREEN}{path}{WHITE}$: "))
+            cmd = shlex.split(
+                input(
+                    f"\n\001{RED}\002{USER}\001{WHITE}\002@\001{RED}\002{HOST}\001{GREEN}\002{path}\001{WHITE}\002$: "
+                )
+            )
         except ValueError as exc:
             print_error(str(exc))
             continue
@@ -125,7 +132,6 @@ try:
 
         if len(cmd) == 0:
             continue
-
 
         elif cmd[0] == "cd":
             if len(cmd) < 2:
@@ -141,10 +147,11 @@ try:
                 if cmd[1] in current and isinstance(current[cmd[1]], dict):
                     actual_path.append(cmd[1])
                 elif cmd[1] in current:
-                    print(f"\n[{RED}ERROR{WHITE}] {cmd[1]} is a file, only use cd on directories.")
+                    print(
+                        f"\n[{RED}ERROR{WHITE}] {cmd[1]} is a file, only use cd on directories."
+                    )
                 else:
                     print(f"\n[{RED}ERROR{WHITE}] Directory not found: {cmd[1]}")
-
 
         elif cmd[0] == "ls":
             current = get_current_dir()
@@ -168,7 +175,9 @@ try:
                     print(f"\n[{RED}ERROR{WHITE}] File not found: {target}")
 
                 elif isinstance(current[target], dict):
-                    print(f"\n[{RED}ERROR{WHITE}] {target} is a directory, use ls or cd.")
+                    print(
+                        f"\n[{RED}ERROR{WHITE}] {target} is a directory, use ls or cd."
+                    )
 
                 else:
                     print(f"\n{current[target]}")
@@ -208,7 +217,8 @@ try:
             break
 
         elif cmd[0] == "help":
-            print("""
+            print(
+                """
 Built-in commands:
 
   clear           Clear the terminal screen.
@@ -223,7 +233,8 @@ Built-in commands:
   apt update      Update local package files from the remote repo.
   exit            Exit the terminal.
   help            Show this help message.                                   
-""")
+"""
+            )
 
         elif cmd[0] == "echo":
             echo(" ".join(cmd[1:]))

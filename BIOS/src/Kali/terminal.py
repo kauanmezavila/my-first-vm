@@ -7,6 +7,7 @@ except ImportError:
     pass
 
 from pathresolve import init_root_path
+
 BIOS_ROOT = init_root_path(2)
 
 from src.pkgs.colorme import *
@@ -110,11 +111,13 @@ try:
                 print_error(f"Invalid pkg name on DEFAULT: {pkg}")
 
     while True:
-        
+
         path = "~" if not actual_path else "~/" + "/".join(actual_path)
         try:
-            print(f"\n{BOLD}{CYAN}┌──({BLUE}{USER}㉿{HOST}{CYAN})-[{WHITE}{path}{CYAN}]{CYAN}")
-            cmd = shlex.split(input(f"└─{BLUE}${RESET}{WHITE} "))
+            print(
+                f"\n{BOLD}{CYAN}┌──({BLUE}{USER}㉿{HOST}{CYAN})-[{WHITE}{path}{CYAN}]{CYAN}"
+            )
+            cmd = shlex.split(input(f"└─\001{BLUE}\002$\001{RESET}\002\001{WHITE}\002 "))
         except ValueError as exc:
             print_error(str(exc))
             continue
@@ -126,7 +129,6 @@ try:
 
         if len(cmd) == 0:
             continue
-
 
         elif cmd[0] == "cd":
             if len(cmd) < 2:
@@ -142,10 +144,11 @@ try:
                 if cmd[1] in current and isinstance(current[cmd[1]], dict):
                     actual_path.append(cmd[1])
                 elif cmd[1] in current:
-                    print(f"\n[{RED}ERROR{WHITE}] {cmd[1]} is a file, only use cd on directories.")
+                    print(
+                        f"\n[{RED}ERROR{WHITE}] {cmd[1]} is a file, only use cd on directories."
+                    )
                 else:
                     print(f"\n[{RED}ERROR{WHITE}] Directory not found: {cmd[1]}")
-
 
         elif cmd[0] == "ls":
             current = get_current_dir()
@@ -169,7 +172,9 @@ try:
                     print(f"\n[{RED}ERROR{WHITE}] File not found: {target}")
 
                 elif isinstance(current[target], dict):
-                    print(f"\n[{RED}ERROR{WHITE}] {target} is a directory, use ls or cd.")
+                    print(
+                        f"\n[{RED}ERROR{WHITE}] {target} is a directory, use ls or cd."
+                    )
 
                 else:
                     print(f"\n{current[target]}")
@@ -209,7 +214,8 @@ try:
             break
 
         elif cmd[0] == "help":
-            print("""
+            print(
+                """
 Built-in commands:
 
   clear           Clear the terminal screen.
@@ -224,7 +230,8 @@ Built-in commands:
   apt update      Update local package files from the remote repo.
   exit            Exit the terminal.
   help            Show this help message.                                   
-""")
+"""
+            )
 
         elif cmd[0] == "echo":
             echo(" ".join(cmd[1:]))

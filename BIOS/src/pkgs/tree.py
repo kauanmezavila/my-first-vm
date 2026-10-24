@@ -3,6 +3,7 @@ def main_call(COMMANDS, MANIFEST=None, get_current_dir=None):
         raise TypeError("[ERROR] 'tree' requires get_current_dir function")
     COMMANDS["tree"] = lambda cmd=None: tree(get_current_dir())
 
+
 def tree(node, prefix="", root=True):
     dirs = 0
     files = 0

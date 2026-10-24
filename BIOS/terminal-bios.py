@@ -6,6 +6,7 @@ except ImportError:
     pass
 
 from src.pkgs.pathresolve import *
+
 BIOS_ROOT = init_root_path(0)
 
 from terminal_pkg import *
@@ -17,11 +18,8 @@ actual_dir: str | None = None
 
 actual_path: list = []
 
-config = {
-    "cpu_boost": {
-        "status": False
-    }
-}
+config = {"cpu_boost": {"status": False}}
+
 
 def cpu_boost(mode):
     if mode == "enable":
@@ -36,13 +34,14 @@ def cpu_boost(mode):
             HARDWARE["cpu"]["bios-mode"] = "base"
             config["cpu_boost"]["status"] = False
         else:
-            print("[ERROR] CPU is in normal mode")    
+            print("[ERROR] CPU is in normal mode")
+
 
 def get_current_dir():
     current = FILES
 
     for part in actual_path:
-      current = current[part]
+        current = current[part]
 
     return current
 
@@ -90,7 +89,6 @@ def edit_entry(cmd):
     return True
 
 
-
 splash: str = main_splash()
 
 
@@ -105,7 +103,7 @@ if splash == "Start":
 
             if cmd == None or len(cmd) == 0:
                 pass
-                   
+
             elif cmd[0] == "clear":
                 clear()
 
@@ -123,10 +121,11 @@ if splash == "Start":
                     if cmd[1] in current and isinstance(current[cmd[1]], dict):
                         actual_path.append(cmd[1])
                     elif cmd[1] in current:
-                        print(f"\n[ERROR] {cmd[1]} is a file, only use cd on directories.")
+                        print(
+                            f"\n[ERROR] {cmd[1]} is a file, only use cd on directories."
+                        )
                     else:
                         print(f"\n[ERROR] Directory not found: {cmd[1]}")
-
 
             elif cmd[0] == "ls":
                 current = get_current_dir()
@@ -166,7 +165,8 @@ if splash == "Start":
                 break
 
             elif cmd[0] == "help":
-                print("""\nAvailable commands:
+                print(
+                    """\nAvailable commands:
   clear           Clear the terminal screen.
   cd <dir>        Change the current directory to <dir>. Use '..' to go up one level.
   ls              List the contents of the current directory.
@@ -179,7 +179,8 @@ if splash == "Start":
   deploy <.iso>   Deploy and start a .iso
   exit            Exit the terminal.
   help            Show this help message.
-                """)
+                """
+                )
 
             elif cmd[0] == "deploy":
                 if len(cmd) < 2:
@@ -201,9 +202,11 @@ if splash == "Start":
 
             elif cmd[0] == "config":
                 if len(cmd) == 1:
-                    print(f"""System configs:
+                    print(
+                        f"""System configs:
 [{"X" if config["cpu_boost"]["status"] == True else " "}] CPU Boost (cpu enable/disable)
-""")
+"""
+                    )
 
                 elif cmd[1] == "cpu":
                     if len(cmd) < 3:
@@ -215,15 +218,15 @@ if splash == "Start":
                     else:
                         print("Opção inválida. Use 'enable' ou 'disable'.")
 
-
                 else:
-                    print(f"""System configs:
+                    print(
+                        f"""System configs:
 [{"X" if config["cpu_boost"]["status"] else " "}] CPU Boost (cpu enable/disable)
-""")
+"""
+                    )
 
             else:
                 print(f"\n[ERROR] Command not found: {cmd[0]}")
-
 
     except KeyboardInterrupt:
         print("\n\n[ OK ] Shutting down...")

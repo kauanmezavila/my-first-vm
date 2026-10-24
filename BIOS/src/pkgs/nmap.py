@@ -1,5 +1,5 @@
-
 from pathresolve import init_root_path
+
 BIOS_ROOT = init_root_path(2)
 
 import argparse
@@ -74,26 +74,16 @@ def nmap(MANIFEST, cmd=None):
         prog="nmap",
         description="Network exploration tool",
         add_help=False,
-        usage="nmap [-h] [-p PORTS] [-T TIMING] [--timeout SECONDS] [target]"
+        usage="nmap [-h] [-p PORTS] [-T TIMING] [--timeout SECONDS] [target]",
     )
 
     parser.add_argument("-h", "--help", action="store_true")
     parser.add_argument("target", nargs="?")
     parser.add_argument("-p", "--ports", type=parse_ports, default=None)
     parser.add_argument(
-        "-T",
-        dest="timing",
-        type=int,
-        choices=range(1, 6),
-        default=3,
-        metavar="0-5"
+        "-T", dest="timing", type=int, choices=range(1, 6), default=3, metavar="0-5"
     )
-    parser.add_argument(
-        "--timeout",
-        type=float,
-        default=0.5,
-        metavar="SECONDS"
-    )
+    parser.add_argument("--timeout", type=float, default=0.5, metavar="SECONDS")
 
     parser.epilog = (
         "Examples:\n"
@@ -136,21 +126,11 @@ def nmap(MANIFEST, cmd=None):
 
     ports = args.ports or list(range(1, 1025))
 
-    workers = {
-        1: 10,
-        2: 25,
-        3: 50,
-        4: 100,
-        5: 200
-    }[args.timing]
-
+    workers = {1: 10, 2: 25, 3: 50, 4: 100, 5: 200}[args.timing]
 
     try:
         addresses = socket.getaddrinfo(
-            target,
-            None,
-            family=socket.AF_INET,
-            type=socket.SOCK_STREAM
+            target, None, family=socket.AF_INET, type=socket.SOCK_STREAM
         )
         ip = addresses[0][4][0]
     except (socket.gaierror, IndexError, OSError):
@@ -158,9 +138,7 @@ def nmap(MANIFEST, cmd=None):
         return
 
     started = time.perf_counter()
-    timestamp = datetime.now().astimezone().strftime(
-        "%Y-%m-%d %H:%M %Z"
-    )
+    timestamp = datetime.now().astimezone().strftime("%Y-%m-%d %H:%M %Z")
 
     print()
     print(f"Starting Nmap 7.98 ( https://nmap.org ) at {timestamp}")
@@ -170,10 +148,7 @@ def nmap(MANIFEST, cmd=None):
 
     def scan_tcp(port):
         try:
-            with socket.socket(
-                socket.AF_INET,
-                socket.SOCK_STREAM
-            ) as sock:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
                 sock.settimeout(args.timeout)
                 result = sock.connect_ex((ip, port))
 
@@ -192,7 +167,7 @@ def nmap(MANIFEST, cmd=None):
                 errno.ETIMEDOUT,
                 errno.EHOSTUNREACH,
                 errno.ENETUNREACH,
-                errno.EACCES
+                errno.EACCES,
             ):
                 return port, "filtered", None
 
@@ -204,10 +179,7 @@ def nmap(MANIFEST, cmd=None):
     results = []
 
     with ThreadPoolExecutor(max_workers=workers) as executor:
-        futures = {
-            executor.submit(scan_tcp, port): port
-            for port in ports
-        }
+        futures = {executor.submit(scan_tcp, port): port for port in ports}
 
         for future in as_completed(futures):
             try:
@@ -219,12 +191,7 @@ def nmap(MANIFEST, cmd=None):
     results.sort(key=lambda item: item[0])
     elapsed = time.perf_counter() - started
 
-    counts = {
-        "open": 0,
-        "closed": 0,
-        "filtered": 0,
-        "unknown": 0
-    }
+    counts = {"open": 0, "closed": 0, "filtered": 0, "unknown": 0}
 
     for _, state, _ in results:
         counts[state] += 1
@@ -254,7 +221,4 @@ def nmap(MANIFEST, cmd=None):
             print(f"{port}/tcp".ljust(9) + f"{state:<10}{service}")
 
     print()
-    print(
-        f"Nmap done: 1 IP address ({ip}) scanned in "
-        f"{elapsed:.2f} seconds"
-    )
+    print(f"Nmap done: 1 IP address ({ip}) scanned in " f"{elapsed:.2f} seconds")

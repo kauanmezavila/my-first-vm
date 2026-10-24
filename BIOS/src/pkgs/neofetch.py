@@ -1,16 +1,20 @@
 from pathresolve import init_root_path
+
 BIOS_ROOT = init_root_path(2)
 
 from src.pkgs.colorme import *
 from hardware import HARDWARE
 
+
 def main_call(COMMANDS, MANIFEST, get_current_dir=None):
     COMMANDS["neofetch"] = lambda: neofetch(MANIFEST)
+
 
 def neofetch(MANIFEST):
 
     if MANIFEST["distro"] == "Debian":
-        print(f"""{RED}
+        print(
+            f"""{RED}
 ⠀⠀⠀⠀⠀⠀⠀⠀⡀⠀⡀⡀⠀⠀⠀⠀⡀         {RED}{MANIFEST["user"]}{WHITE}@{RED}{MANIFEST["host"]}
 {RED}⠀⠀⠀⠀⠀⠀⠀⣄⢢⠑⠾⠲⢗⢧⢪⣤⡀⡀        {WHITE}------------------
 {RED}⠀⠀⠀⠀⠀⡰⣺⣞⠍⠎⠊⠉⠈⠂⠃⠅⠈⡱⢮⠠⢁     {RED}OS:{WHITE} {MANIFEST["distro"]} {MANIFEST["version"]} {MANIFEST["architecture"]}
@@ -24,10 +28,12 @@ def neofetch(MANIFEST):
 {RED}⠀⠀⠀⠈⢏⠽⣝⢂⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀      {RESET}{BRIGHT_BLACK}███{BRIGHT_RED}███{BRIGHT_GREEN}███{BRIGHT_YELLOW}███{BRIGHT_BLUE}███{BRIGHT_MAGENTA}███{BRIGHT_CYAN}███{BRIGHT_WHITE}███{RESET}
 {RED}⠀⠀⠀⠀⠐⠀⠉⠢⢍⣠⣀⠀⠀⠀⠀⠀⢀⠄⠀⠁
 {RED}⠀⠀⠀⠀⠀⠀⠀⠈⠁⠌⠁⠉⠹⠫⠁⠁⠀⠀⠀⠀ {RESET}
-""")
+"""
+        )
 
     if MANIFEST["distro"] == "Ubuntu":
-        print(f"""{RED}
+        print(
+            f"""{RED}
 {RED}⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣀⣀⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀        {RED}{MANIFEST["user"]}{WHITE}@{RED}{MANIFEST["host"]}
 {RED}⠀⠀⠀⠀⠀⠀⢀⣤⣴⣾⢿⣻⢯⣿⡽⣯⣟⣿⣳⣦⣄⡀⠀⠀⠀⠀⠀⠀        {WHITE}------------------
 {RED}⠀⠀⠀⠀⣠⣾⣟⣯⣟⣾⣟⣯⣿⣳⡿⣯⣟⡾⠹⠷⣻⣟⣧⣄⠀⠀⠀⠀        {RED}OS:{WHITE} {MANIFEST["distro"]} {MANIFEST["version"]} {MANIFEST["architecture"]}
@@ -43,10 +49,12 @@ def neofetch(MANIFEST):
 {RED}⠀⠀⠀⠀⠙⢻⣾⣽⣳⣿⣻⣞⣷⣻⡾⣽⣟⣷⣴⢶⣯⣟⡗⠋⠀⠀⠀⠀
 {RED}        ⠑⠻⡾⣽⣻⣾⣽⣻⣽⣾⣻⠾⠏⠃⠁⠀⠀⠀⠀⠀⠀
 {RED}⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠁⠉⠉⠁⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀        {RESET}
-""")
+"""
+        )
 
     elif MANIFEST["distro"] == "Kali":
-        print(f"""{BLUE}
+        print(
+            f"""{BLUE}
 {BLUE}⠀⠀⠀⠀⠠⠤⠤⠤⠤⠤⣤⣤⣤⣄⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀        {BLUE}{MANIFEST["user"]}{WHITE}@{BLUE}{MANIFEST["host"]}
 {BLUE}⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠛⠛⠿⢶⣤⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀        {WHITE}------------------
 {BLUE}⠀⠀⢀⣀⣀⣠⣤⣤⣴⠶⠶⠶⠶⠶⠶⠶⠶⠶⠿⠿⢿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀        {BLUE}OS:{WHITE} {MANIFEST["distro"]} {MANIFEST["version"]} {MANIFEST["architecture"]}
@@ -64,4 +72,5 @@ def neofetch(MANIFEST):
 {BLUE}⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠻⡆⠀⠈
 {BLUE}⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⡀⠀
 {BLUE}⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠃⠀        {RESET}
-""")
+"""
+        )

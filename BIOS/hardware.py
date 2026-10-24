@@ -10,7 +10,7 @@ HARDWARE = {
         "cache_l3_mb": 32,
         "usage_percent": 24.7,
         "temperature_c": 53,
-        "bios-mode": "base"
+        "bios-mode": "base",
     },
     "memory": {
         "total_gb": 16,
@@ -18,7 +18,7 @@ HARDWARE = {
         "free_gb": 6.4,
         "cached_gb": 1.8,
         "swap_total_gb": 4,
-        "swap_used_mb": 128
+        "swap_used_mb": 128,
     },
     "storage": [
         {
@@ -30,7 +30,7 @@ HARDWARE = {
             "mount": "/",
             "used_gb": 412,
             "free_gb": 588,
-            "temperature_c": 38
+            "temperature_c": 38,
         }
     ],
     "gpu": {
@@ -39,6 +39,6 @@ HARDWARE = {
         "vram_gb": 12,
         "driver": "570.153.02",
         "temperature_c": 47,
-        "usage_percent": 12
-    }
+        "usage_percent": 12,
+    },
 }

@@ -6,9 +6,7 @@ MANIFEST = {
     "kernel": "Linux 6.17.0-35-generic",
     "iso": "Kali-2026.2-amd64.iso",
     "cpu_mode": "base",
-    "uptime": ""
+    "uptime": "",
 }
 
-MOUNT_INSTRUCTIONS = {
-    "source": r"src/Kali/terminal.py"
-}
+MOUNT_INSTRUCTIONS = {"source": r"src/Kali/terminal.py"}
