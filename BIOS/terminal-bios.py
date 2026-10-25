@@ -93,11 +93,13 @@ splash: str = main_splash()
 
 
 if splash == "Start":
+    print(RESET)
     clear()
 
     bios_banner()
     try:
         while True:
+            print(RESET)
             path = "~" if not actual_path else "(~/" + "/".join(actual_path) + ")"
             cmd = shlex.split(input(f"\nroot@main-vm{path}$: "))
 

@@ -1,10 +1,45 @@
-
+import argparse
 import requests
 import time
 import socket
 import ipaddress
 import statistics
 
+def main_call(COMMANDS, MANIFEST=None, get_current_dir=None):
+    COMMANDS["ping"] = lambda cmd=None: ping_command(cmd)
+
+
+def ping_command(cmd=None):
+    parser = argparse.ArgumentParser(prog="ping", add_help=False)
+    parser.add_argument("-h", "--help", action="store_true")
+    family = parser.add_mutually_exclusive_group()
+    family.add_argument("-4", dest="version", action="store_const", const="IPv4")
+    family.add_argument("-6", dest="version", action="store_const", const="IPv6")
+    parser.add_argument("-c", "--count", type=int, default=None)
+    parser.add_argument("host", nargs="?")
+
+    args_list = list(cmd or [])
+    if args_list and args_list[0] == "ping":
+        args_list = args_list[1:]
+
+    try:
+        args = parser.parse_args(args_list)
+    except SystemExit:
+        print("Usage: ping [-4 | -6] [-c COUNT] HOST")
+        return
+
+    if args.help:
+        print("Usage: ping [-4 | -6] [-c COUNT] HOST")
+        print("Checks HTTPS response time; this is not an ICMP ping.")
+        return
+    if not args.host:
+        print("ping: missing host (try 'ping --help')")
+        return
+    if args.count is not None and args.count < 1:
+        print("ping: count must be greater than zero")
+        return
+
+    ping(args.host, args.version, args.count)
 
 def identifyHost(value: str) -> str:
     try:
@@ -30,7 +65,11 @@ def urlToIP(url):
     return ipv4, ipv6
 
 
-def ping(entry, version=None):
+def ping(entry, version=None, count=None):
+    if not isinstance(entry, str) or not entry.strip():
+        print("Invalid host")
+        return
+    entry = entry.strip()
     entryType = identifyHost(entry)
 
     if entryType == "INVALID":
@@ -49,7 +88,11 @@ def ping(entry, version=None):
         family = socket.AF_INET if ip.version == 4 else socket.AF_INET6
 
     else:
-        ipv4, ipv6 = urlToIP(entry)
+        try:
+            ipv4, ipv6 = urlToIP(entry)
+        except (socket.gaierror, OSError):
+            print(f"Could not resolve host: {entry}")
+            return
 
         if version == "IPv4":
             addresses = ipv4
@@ -68,7 +111,7 @@ def ping(entry, version=None):
         address = sorted(addresses)[0]
         host = entry
 
-    # Requests uses HTTP, not ICMP.
+    # Requests uses HTTPS, not ICMP. Domain URLs let requests handle DNS and TLS.
     url = f"https://{host}" if entryType == "DOMAIN" else (
         f"https://[{address}]" if family == socket.AF_INET6
         else f"https://{address}"
@@ -80,16 +123,15 @@ def ping(entry, version=None):
     startTotal = time.perf_counter()
     pkg = b"\x00" * 56
 
-    print(f"PING {entry} ({address}) {len(pkg)} data bytes")
+    print(f"HTTPS probe to {entry} ({address}); {len(pkg)} data bytes")
 
     try:
-        while True:
+        while count is None or pkgID < count:
             pkgID += 1
 
             try:
                 start = time.perf_counter()
 
-                # Force the selected IP family and connect to its address.
                 response = requests.get(
                     url,
                     data=pkg,
@@ -104,25 +146,25 @@ def ping(entry, version=None):
                 sentPkgs[pkgID] = tim
                 pkgSucess += 1
 
-                print(
-                    f"{len(pkg) + 8} bytes from {address}: "
-                    f"icmp_seq={pkgID} time={tim:.2f} ms"
-                )
+                print(f"HTTPS response from {address}: seq={pkgID} time={tim:.2f} ms")
 
             except requests.RequestException:
                 print(f"Request failed for {address}")
 
-            time.sleep(1)
+            if count is None or pkgID < count:
+                time.sleep(1)
 
     except KeyboardInterrupt:
+        pass
+    finally:
         totalTime = (time.perf_counter() - startTotal) * 1000
         lost = pkgID - pkgSucess
         loss = lost / pkgID * 100 if pkgID else 0
 
-        print(f"\n--- {entry} ping statistics ---")
+        print(f"\n--- {entry} HTTPS probe statistics ---")
         print(
-            f"{pkgID} packets transmitted, {pkgSucess} received, "
-            f"{loss:.1f}% packet loss, time {totalTime:.0f}ms"
+            f"{pkgID} probes sent, {pkgSucess} responses received, "
+            f"{loss:.1f}% failed, time {totalTime:.0f}ms"
         )
 
         if sentPkgs:
@@ -134,7 +176,7 @@ def ping(entry, version=None):
             mdev = statistics.pstdev(times)
 
             print(
-                f"rtt min/avg/max/mdev = "
+                f"response time min/avg/max/mdev = "
                 f"{minimum:.3f}/{average:.3f}/"
                 f"{maximum:.3f}/{mdev:.3f} ms"
             )
