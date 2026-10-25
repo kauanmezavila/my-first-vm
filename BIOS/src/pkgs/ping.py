@@ -30,7 +30,6 @@ def ping_command(cmd=None):
 
     if args.help:
         print("Usage: ping [-4 | -6] [-c COUNT] HOST")
-        print("Checks HTTPS response time; this is not an ICMP ping.")
         return
     if not args.host:
         print("ping: missing host (try 'ping --help')")
@@ -123,7 +122,7 @@ def ping(entry, version=None, count=None):
     startTotal = time.perf_counter()
     pkg = b"\x00" * 56
 
-    print(f"HTTPS probe to {entry} ({address}); {len(pkg)} data bytes")
+    print(f"PING {entry} ({address}) {len(pkg)} data bytes")
 
     try:
         while count is None or pkgID < count:
@@ -146,10 +145,10 @@ def ping(entry, version=None, count=None):
                 sentPkgs[pkgID] = tim
                 pkgSucess += 1
 
-                print(f"HTTPS response from {address}: seq={pkgID} time={tim:.2f} ms")
+                print(f"{len(pkg) + 8} from {address}: seq={pkgID} time={tim:.2f} ms")
 
             except requests.RequestException:
-                print(f"Request failed for {address}")
+                print(f"Request failed for {address}: seq={pkgID} time=None ms")
 
             if count is None or pkgID < count:
                 time.sleep(1)
@@ -161,10 +160,10 @@ def ping(entry, version=None, count=None):
         lost = pkgID - pkgSucess
         loss = lost / pkgID * 100 if pkgID else 0
 
-        print(f"\n--- {entry} HTTPS probe statistics ---")
+        print(f"\n--- {entry} ping statistics ---")
         print(
-            f"{pkgID} probes sent, {pkgSucess} responses received, "
-            f"{loss:.1f}% failed, time {totalTime:.0f}ms"
+            f"{pkgID} packets transmitted, {pkgSucess} received, "
+            f"{loss:.1f}% packet loss, time {totalTime:.0f}ms"
         )
 
         if sentPkgs:
@@ -176,7 +175,7 @@ def ping(entry, version=None, count=None):
             mdev = statistics.pstdev(times)
 
             print(
-                f"response time min/avg/max/mdev = "
+                f"rtt min/avg/max/mdev = "
                 f"{minimum:.3f}/{average:.3f}/"
                 f"{maximum:.3f}/{mdev:.3f} ms"
             )
